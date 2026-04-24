@@ -1,294 +1,282 @@
 ---
-name: master-thesis-studio
-描述: "用于中文硕士论文项目，尤其是东南大学风格 Word 模板或已有草稿的论文工作流。用户需要初始化论文工作区、确认题目和大纲、生成或续写中文章节 Markdown、管理参考文献/图表/表格/公式/代码/数据资产、清洗占位符，或通过内置 Word/XML 脚本安全生成 DOCX 时使用。"
-description: Use this skill for Southeast University-style master's thesis projects from a Word template or existing draft, including optional reverse parsing of an existing DOCX, user intake, outline planning, chapter drafting, academic asset management, Markdown visualization, references, figures, tables, formulas, and safe DOCX generation through the bundled Word/XML scripts.
+name: zje-thesis-studio
+description: 用于浙江大学爱丁堡大学联合学院（ZJE）本科毕业论文（设计）的写作与格式管理。支持从英文毕业论文（IBMS10008课程）迁移为中文论文、填写教务处附件模板（附件1~17）、管理参考文献与图表资产、生成符合ZJE规范的中文论文 Word 文档。
 ---
 
-## UTF-8 Reading Guard
+## UTF-8 说明
 
-Most instructions in this skill are Chinese and all Markdown/JSON files are UTF-8. If Chinese text appears garbled, do not edit or reason from the garbled output. Re-read files with an explicit UTF-8 command:
+本 Skill 所有文件均为 UTF-8 编码。如遇中文乱码，用以下方式重新读取：
 
 ```bash
 python -c "from pathlib import Path; import sys; sys.stdout.reconfigure(encoding='utf-8'); print(Path('SKILL.md').read_text(encoding='utf-8'))"
 ```
 
-For short targeted reads, prefer Python over PowerShell `Get-Content`:
+---
+
+# ZJE 本科毕业论文 Studio
+
+浙江大学爱丁堡大学联合学院（ZJE）本科毕业论文写作与格式管理 Skill。
+
+## ZJE 特殊性：一句话说明
+
+**ZJE 学生先在 IBMS10008 课程中完成英文毕业论文，再将英文论文迁移为中文论文，连同 Project Preview 的文献综述和开题报告，一起填入教务处指定的官方模板，最终提交三个版本（查重电子版 / BB电子版 / 纸质存档版）。**
+
+本 Skill 围绕这个核心流程设计，涵盖英文论文解析、中文迁移写作、Part 2 模板填写、附件表格填写、参考文献管理、图表资产整理和合规 Word 输出。
+
+---
+
+## 一、ZJE 论文结构总览
+
+ZJE 本科毕业论文（设计）由两大部分组成：
+
+### 第一部分：毕业论文（设计）
+前置部分（无页眉，页脚为罗马数字页码）：
+1. 大封面（附件8第1页）
+2. 承诺书（附件6）
+3. 致谢
+4. 中文摘要
+5. 英文摘要（Abstract）
+6. 目录
+
+正文部分（奇数页眉=论文名居右，偶数页眉="浙江大学本科生毕业论文（设计）"居左，页脚=阿拉伯数字）：
+7. 第一部分封面（附件8）
+8. 正文 + 作者简历
+
+### 第一部分与第二部分之间
+9. 任务书（附件1）
+10. 毕业论文考核表（附件11）
+
+### 第二部分：文献综述和开题报告
+11. 第二部分封面1（附件8）
+12. 第二部分封面2（附件2第1页）
+13. 指导教师对文献综述和开题报告的具体要求（附件2）
+14. 目录（罗马页码）
+15. 文献综述
+16. 开题报告
+17. 外文翻译
+18. 外文原文（不编目录页码）
+
+### 尾部附件（纸质版装入，电子版不含）
+19. 文献综述和开题报告考核表（附件3）
+20. 中文查重报告（附件17）
+21. 专家评阅意见表（附件9）
+22. 现场答辩记录表（附件10，答辩现场填写）
+
+### 三个版本的区别
+
+| 组成部分 | 查重电子版 | BB提交电子版 | 纸质存档版 |
+|----------|-----------|-------------|-----------|
+| 大封面 | ✓ | ✓ | ✓（单面） |
+| 承诺书 | **✗** | ✓（可不签） | ✓（单面·须签字） |
+| 致谢 | ✓ | ✓ | ✓（单面） |
+| 摘要（中/英） | ✓ | ✓ | ✓（各1页·单面） |
+| 目录 | ✓ | ✓ | ✓（单/双面） |
+| 第一部分封面 | ✓ | ✓ | ✓（单面） |
+| 正文 | ✓（不含参考文献和简历） | ✓ | ✓（双面） |
+| 参考文献 | **✗** | ✓ | ✓（双面） |
+| 作者简历 | **✗** | ✓ | ✓（双面） |
+| 任务书（附件1） | **✗** | **✗** | ✓（单面） |
+| 考核表（附件11） | **✗** | **✗** | ✓（单面） |
+| 第二部分正文 | ✓ | ✓ | ✓（双面） |
+| 考核表（附件3） | **✗** | **✗** | ✓（单面） |
+| 查重报告 | **✗** | **✗** | ✓（单面） |
+| 专家评阅意见 | **✗** | **✗** | ✓（单面） |
+| 答辩记录表 | **✗** | **✗** | ✓（单面） |
+
+---
+
+## 二、ZJE 写作模式
+
+### 模式A：英文论文 → 中文论文迁移（最核心）
+
+适用于学生已完成 IBMS10008 英文毕业论文，需要迁移为中文论文第一部分。
+
+工作步骤：
+1. 解析英文论文：提取标题、摘要、章节结构、正文内容
+2. 填写第一部分模板：封面、承诺书、致谢、中文摘要（翻译英文Abstract）
+3. 迁移正文：将 Introduction / Methods / Results / Discussion / Conclusion 翻译为中文，填入附件8第一部分模板
+4. 整理参考文献和作者简历（用于 BB 电子版和纸质版，不含于查重版）
+
+**注意**：英文论文的 Acknowledgement 翻译为中文后填入致谢；英文摘要（Abstract）原文保留为英文摘要；中文摘要为300–600字。
+
+### 模式B：填写 Part 2 模板
+
+适用于填写第二部分（文献综述 + 开题报告 + 外文翻译）。
+
+工作步骤：
+1. 从 Project Preview 课程材料中提取文献综述和开题报告内容
+2. 填入附件2第二部分模板（英文原文，不翻译）
+3. 选取一篇与毕设课题相关的学术研究论文（非综述、非会议论文），自行翻译为中文，填入外文翻译部分
+4. 外文原文附在最后（文字粘贴或截图均可）
+
+### 模式C：填写附件表格
+
+适用于填写附件1~11中的各类表格。
+
+关键原则：
+- **Dissertation / Preview / Oral Presentation 的 feedback**：原文粘贴，不翻译
+- 任务书内容：从 Project Description 或 "Guidance and Agreement for ZJE Year 4 External Projects Supervisors" 文件中摘取英文原文填入
+- 所有签名：电子签或打印后手签均可
+
+### 模式D：参考文献与资产管理
+
+适用于管理参考文献、整理图表、处理公式和代码资产。
+
+### 模式E：三版本 Word 输出
+
+适用于最终生成合规的 Word 文档，包括查重版、BB电子版、纸质版的封面/正文/附件。
+
+---
+
+## 三、第一次问诊
+
+首次使用本 Skill 时，先确认以下事实：
+
+### 英文论文元数据
+- 英文论文题目（IBMS10008 课程标题）
+- 导师姓名
+- 作者姓名
+- 英文论文完成状态：已提交 / 进行中 / 未开始
+- Abstract 内容是否已定稿
+
+### 中文论文目标
+- 中文论文题目（是否已翻译，或需辅助翻译）
+- IBMS10008 和 Preview 课程各自的完成进度
+- 当前最紧迫的任务：迁移英文论文 / 填写 Part 2 / 填写附件表格
+
+### 已有资产
+- 英文论文 Word 文件路径
+- Preview 课程材料路径
+- 参考文献列表（是否有 .bib 或 JSON 文件）
+- 图片、表格、代码、数据文件
+
+### 模板来源
+- 教务处官方模板优先，默认使用 `examples/` 中的附件模板
+- 格式规范优先参考 `examples/中文论文材料顺序-全局索引.xlsx`
+
+---
+
+## 四、目录结构
+
+```
+BS-thesis-studio-skill/
+├─ SKILL.md                        ← 本文件
+├─ README.md                       ← 项目说明
+├─ assets/
+│  └─ project_state.schema.json    ← 项目状态 JSON Schema
+├─ examples/                       ← ZJE 教务处官方材料（只读·不修改）
+│  ├─ 中文论文材料顺序-全局索引.xlsx  ← 全局索引（优先阅读）
+│  ├─ 浙江大学本科毕业论文编写规则.pdf
+│  ├─ 附件1-毕业论文任务书-空白表格.docx
+│  ├─ 附件1-毕业论文任务书.pdf
+│  ├─ 附件2-第二部分模板-文献综述开题报告外文翻译.doc
+│  ├─ 附件2-指导教师对文献综述和开题报告的具体要求-格式说明.pdf
+│  ├─ 附件2-第二部分封面-格式说明.pdf
+│  ├─ 附件3-文献综述和开题报告考核表-空白表格.docx
+│  ├─ 附件3-文献综述和开题报告考核表.pdf
+│  ├─ 附件6-承诺书-空白表格.docx
+│  ├─ 附件8-第一部分模板-毕业论文主体.doc
+│  ├─ 附件8-大封面-格式说明.pdf
+│  ├─ 附件8-第一部分封面-格式说明.pdf
+│  ├─ 附件8-第一部分封面+大封面-格式参考.pdf
+│  ├─ 附件8-第二部分封面1-格式说明.pdf
+│  ├─ 附件9-专家评阅意见表-空白表格.doc
+│  ├─ 附件9-专家评阅意见表.pdf
+│  ├─ 附件10-现场答辩记录表-空白表格.doc
+│  ├─ 附件10-现场答辩记录表-空白表格.docx
+│  ├─ 附件11-毕业论文考核表.pdf
+│  ├─ 附件17-中文查重报告-打印说明.pdf
+│  ├─ 往届学生优秀论文案例-参考.pdf
+│  ├─ 本次同学英文论文.docx              ← 参考用英文论文示例
+├─ sample_thesis/
+│  └─ translation_parts/            ← 英文论文已完成的中文翻译（8章+11张图片）
+│     ├─ 01_致谢.md ~ 08_结论.md
+│     └─ figures/ (Figure1~8, FigureS1~S3)
+├─ references/
+│  ├─ writing_workflow.md       ← ZJE 写作工作流（问诊、模式、大纲）
+│  ├─ placeholders.md          ← 占位符规范与 ZJE 格式说明
+│  ├─ reference_rules.md        ← 参考文献规范（GB/T 7714）
+│  └─ xml_mapping_spec.md       ← Word/XML 映射规范
+├─ scripts/
+│  ├─ init_thesis_workspace.py
+│  ├─ flat_opc_converter.py
+│  ├─ parse_template_xml.py
+│  ├─ generate_planning_files.py
+│  ├─ apply_markdown_to_xml.py
+│  ├─ build_new_docx.py
+│  ├─ embed_figures_docx.py
+│  ├─ validate_xml_docx.py
+│  ├─ reference_tools.py
+│  └─ word_xml_core.py
+└─ templates/
+   ├─ project_manifest.md
+   ├─ thesis_master_index.md
+   ├─ figures_manifest.md
+   ├─ tables_manifest.md
+   ├─ code_manifest.md
+   └─ data_manifest.md
+```
+
+---
+
+## 五、阶段执行表
+
+| 阶段 | 先阅读 | 生成或更新 | 脚本命令 |
+|------|--------|-----------|---------|
+| 0. 判断状态 | 项目目录、`00_project/`、`09_state/` | 判断是新项目还是续写项目 | 无 |
+| 1. 初始化工作区 | `examples/` 附件模板、`examples/中文论文材料顺序-全局索引.xlsx` | 在论文项目文件夹内生成目录结构 | `python <skill_dir>/scripts/init_thesis_workspace.py .` |
+| 2. 引用已完成的翻译 | `sample_thesis/translation_parts/`（中文章节） | 将 8 个 Markdown 章节 + 11 张图片复制到 `03_chapters/` 和 `04_figures/` | 手动整理 |
+| 3. 填写 Part 2 模板 | `examples/附件2-第二部分模板-文献综述开题报告外文翻译.doc`、`examples/第二部分正文编写说明-文献综述开题报告外文翻译规则.pdf` | `03_chapters/part2_lit_review.md`、`03_chapters/part2_proposal.md`、`03_chapters/part2_translation.md` | 无脚本·手动填写 |
+| 4. 填写附件表格 | `examples/` 对应附件文件 | 各附件填好的 .docx 版本 | 无脚本·手动填写 |
+| 5. 参考文献处理 | `references/reference_rules.md`、`08_refs/` | 规范化引用占位符、参考文献表 | `python <skill_dir>/scripts/reference_tools.py format <refs.json> --style "GB/T 7714"` |
+| 6. 图表资产整理 | `04_figures/`、`05_tables/` manifest | figures_manifest.md、tables_manifest.md 更新 | 无脚本·手动整理 |
+| 7. 生成 Word | `09_state/current_working.xml` | `10_output/thesis_draft_v1.docx` 或指定文件名 | `python <skill_dir>/scripts/build_new_docx.py . --name <output.docx>` |
+| 8. 校验输出 | `09_state/current_working.xml`、`10_output/` | 确认结构正确、DOCX 可重建 | `python <skill_dir>/scripts/validate_xml_docx.py .` |
+
+---
+
+## 六、目录职责
+
+- `00_project/project_manifest.md`：英文论文元数据、中文论文目标、当前进度、已有资产、缺失项、关键决策
+- `00_project/thesis_master_index.md`：两大部分大纲、章节状态、术语表、开放问题
+- `03_chapters/`：从 `sample_thesis/translation_parts/` 引用的中文章节（致谢、摘要、引言、材料与方法、结果、讨论、结论）
+- `04_figures/figures_manifest.md`：从 `sample_thesis/translation_parts/figures/` 引用的图片资产清单
+- `05_tables/tables_manifest.md`：表格资产清单
+- `06_code/code_manifest.md`：代码资产清单
+- `07_data/data_manifest.md`：数据资产清单
+- `08_refs/`：参考文献与文献笔记
+- `09_state/project_state.json`：结构化项目状态
+- `09_state/en_parse_report.md`：英文论文解析报告（可选）
+- `10_output/`：最终生成的 DOCX（按版本命名）
+
+---
+
+## 七、查重注意事项
+
+- **查重地址**：http://check.cnki.net/pmlc/ → 学生入口
+- **用户名**：学号；**密码**：`zje`（小写）+ 身份证后8位（第9位 X 大写）
+- **格式**：必须用 Office Word 或 WPS Word，**禁止 PDF**
+- **查重版包含**：大封面、致谢、目录、中英文摘要、正文（不含参考文献和简历）
+- **查重版不含**：承诺书、参考文献、个人简历
+- **通过标准**：≤ 10%，原则上有且仅有一次机会
+
+---
+
+## 八、环境要求
+
+- Python 3.10+
+- 依赖：`lxml`
+- LibreOffice（用于 .doc 文件转 .docx）
 
 ```bash
-python -c "from pathlib import Path; p=Path('references/writing_workflow.md'); print(p.read_text(encoding='utf-8'))"
+pip install lxml
 ```
 
-Load only the needed reference file. Do not bulk-read every Markdown file unless the task is a full Skill audit.
+---
 
+## 九、安全规则
 
-
-# Master Thesis Studio
-
-这是一个面向中文硕士论文写作与 Word 自动生成的 Skill。它把论文写作流程拆成两层：
-
-1. **写作组织层**：问诊、确认题目、大纲、章节计划、资产清单、写作边界和中文学术表达。
-2. **Word/XML 执行层**：用内置脚本把 Markdown 写入 Flat OPC XML，再生成新的 DOCX。
-
-除非用户明确要求快速演示，否则必须先确认项目事实和写作边界，再写正文或生成 Word。
-
-## 总原则
-
-- 所有新生成的论文标题、章节标题、正文、图题、表题、摘要、说明文字默认使用中文。英文只保留在模型名、算法名、指标名、数据集名、代码路径、文件名和必要术语中。
-- 不编造真实文献、实验结果、样本量、指标或数据来源。没有依据时写“待补充”“待确认”或使用占位符。
-- 不覆盖原始 Word 模板。原始模板固定保存在 `01_template/original_template.docx`。
-- 新 DOCX 只写入 `10_output/`。XML 中间态只写入 `09_state/`。
-- 创建新论文项目时，必须先新建一个独立项目文件夹，并把该文件夹作为论文项目根目录；不要直接在 Skill 根目录、工作区根目录或桌面散落运行初始化。
-- 初始化和后续生成命令应在该论文项目文件夹内运行，项目参数使用 `.`；调用脚本时使用 Skill 中 `scripts/` 的绝对路径，或明确从 Skill 根目录传入项目绝对路径。
-- 用户提供已有 Word 时，先确认是否需要反解析。反解析是可选入口，不是必经流程；如果用户只想把该 Word 作为格式模板，可以只初始化模板，不抽取正文内容。
-- 写回 Word 前必须检查章节 Markdown、占位符、参考文献、图表和状态文件是否一致。
-- 修改占位符、XML 写回、参考文献或章节 Markdown 规则前，先阅读对应 `references/` 文件。
-
-## 第一次响应
-
-第一次使用本 Skill 时，不要直接写论文。先用简短问题确认：
-
-- 论文题目是否已确定，是否需要辅助拟题。
-- 学科方向、研究对象、核心方法、创新点是否已确定。
-- 当前阶段：未开始、已有想法、已有部分章节、已有完整初稿、只需格式化输出。
-- 用户希望的模式：快速初稿、边确认边写、续写已有内容、根据代码/数据转写、只做 Word 写回。
-- 已有资产：Word、Markdown、PDF、笔记、参考文献、代码、数据、图片、表格、公式、实验记录。
-- 如果已有 Word：它是“格式模板”“已有论文内容”还是“两者都是”；是否希望反解析章节、图、表、公式到项目目录。
-- 如果执行反解析：反解析后想做什么，例如只盘点资产、继续写作、修订润色、补缺失章节、重新导出 Word，或做 round-trip 校验。
-- 是否允许模拟数据、示例图表或示例实验结果。不允许时只能基于用户材料写作。
-- 使用哪个模板。默认使用 `examples/Template.docx`。
-
-确认结果必须同步写入：
-
-- `00_project/project_manifest.md`
-- `00_project/thesis_master_index.md`
-- `00_project/decisions_log.md`
-- `09_state/project_state.json`
-
-## 阶段执行表
-
-| 阶段 | 先阅读什么 | 更新或生成什么 | 执行什么脚本 |
-| --- | --- | --- | --- |
-| 0. 判断项目状态 | 项目根目录、`00_project/`、`09_state/project_state.json`、`03_chapters/` | 判断是新项目、续写项目还是只需导出；如果是新项目，先创建独立项目文件夹并进入该文件夹 | 无 |
-| 1. 初始化工作区 | 用户给定模板路径；默认模板 `examples/Template.docx` | 在当前论文项目文件夹内生成 `00_project/`、`01_template/`、`03_chapters/`、`04_figures/`、`05_tables/`、`06_code/`、`07_data/`、`08_refs/`、`09_state/`、`10_output/` | 在项目文件夹内运行：`python <skill_dir>/scripts/init_thesis_workspace.py . --template <docx_path>` |
-| 1A. 可选反解析已有 Word | 用户确认该 Word 是已有论文内容且希望抽取内容 | `03_chapters/` 章节草稿、`04_figures/` 真实图片、`05_tables/` 表格 `.md/.csv`、`09_state/reverse_parse_assets.json`、反解析报告 | `python <skill_dir>/scripts/reverse_parse_docx.py <project_dir> --docx <user.docx>` |
-| 2. 转换模板 | `01_template/original_template.docx` | `01_template/template.flat.xml` | `python scripts/flat_opc_converter.py toxml <input.docx> <output.xml>` |
-| 3. 解析模板结构 | `references/xml_mapping_spec.md`、`01_template/template.flat.xml` | `09_state/parsed_structure.json` | `python scripts/parse_template_xml.py <template.flat.xml> <parsed_structure.json>` |
-| 4. 生成项目控制文件 | `references/writing_workflow.md`、`assets/project_state.schema.json` | `00_project/*.md`、初始 `03_chapters/chXX_plan.md`、`03_chapters/chXX_draft.md`、`09_state/project_state.json` | `python scripts/generate_planning_files.py <project_dir>` |
-| 5. 启动问诊和资产盘点 | `references/writing_workflow.md`、已有 `00_project/*.md`、各资产 manifest | 更新 project manifest、master index、decisions log、figures/tables/code/data manifest | 通常无脚本，必要时手动编辑 Markdown |
-| 6. 章节计划 | `references/writing_workflow.md` 的章节计划规则、`00_project/thesis_master_index.md`、相关资产 | `03_chapters/chXX_plan.md` | 通常无脚本 |
-| 7. 章节正文 Markdown | `03_chapters/chXX_plan.md`、`references/writing_workflow.md`、`references/placeholders.md`、相关 `08_refs/`、`06_code/`、`07_data/`、`04_figures/`、`05_tables/` | `03_chapters/chXX_draft.md` 或兼容命名的 `ch*.md` | 通常无脚本 |
-| 8. 参考文献处理 | `references/reference_rules.md`、`08_refs/` | 规范化引用占位符和参考文献对象 | `python scripts/reference_tools.py format <refs.json> --style "GB/T 7714"` |
-| 9. Markdown 写入 XML | `references/placeholders.md`、`references/xml_mapping_spec.md`、`03_chapters/`、`09_state/project_state.json` | `09_state/current_working.xml`、XML 快照、`09_state/current_content_manifest.json` | `python scripts/apply_markdown_to_xml.py <project_dir> --out 09_state/current_working.xml` |
-| 10. 生成 Word | `09_state/current_working.xml` | `10_output/thesis_draft_v1.docx` 或用户指定文件名 | `python scripts/build_new_docx.py <project_dir> --name thesis_draft_v1.docx` |
-| 11. 校验输出 | `references/xml_mapping_spec.md`、`09_state/current_working.xml`、`10_output/` | 确认 XML 是 Flat OPC、章节数正确、DOCX 可重建 | `python scripts/validate_xml_docx.py <project_dir>` |
-
-## 目录职责
-
-- `00_project/project_manifest.md`：项目事实、写作模式、用户状态、资产、缺失项和假设。
-- `00_project/thesis_master_index.md`：总大纲、章节状态、术语表、开放问题。
-- `00_project/decisions_log.md`：用户确认、重要假设、写作边界和变更记录。
-- `03_chapters/`：章节计划和章节正文 Markdown。
-- `04_figures/figures_manifest.md`：图片文件、图题、来源、章节映射、状态。
-- `05_tables/tables_manifest.md`：表格/数据来源、表题、章节映射、状态。
-- `06_code/code_manifest.md`：代码资产、可支撑的方法描述、实现细节和实验流程。
-- `07_data/data_manifest.md`：数据集、实验结果、指标、日志和可支撑结论。
-- `08_refs/`：参考文献、文献笔记、检索记录和引用元数据。
-- `09_state/project_state.json`：脚本写回使用的结构化项目状态。
-- `09_state/current_working.xml`：当前可生成 DOCX 的 Flat OPC XML。
-- `09_state/reverse_parse_assets.json`：可选反解析生成的真实图、表资源清单和可用性标记。
-- `10_output/`：最终生成的 DOCX。
-
-## 何时阅读 References
-
-- 需要问诊、选择写作模式、制定大纲、规划章节或写中文学术正文时，先读 `references/writing_workflow.md`。
-- 需要使用或修改 `[[FIG:...]]`、`[[TBL:...]]`、`[[EQ:...]]`、`[[SYM:...]]`、`[[REF:...]]`、`[[REF_FIG:...]]`、`[[REF_TBL:...]]` 时，先读 `references/placeholders.md`。
-- 需要处理参考文献格式、引用占位符、GB/T 7714 或 Word 交叉引用时，先读 `references/reference_rules.md`。
-- 需要解析模板、反解析已有 Word、修改 XML 写回逻辑、处理标题样式、页眉页脚、分节符、图、表、公式或 DOCX 生成时，先读 `references/xml_mapping_spec.md`。
-- 需要直接编辑 `09_state/project_state.json` 时，先读 `assets/project_state.schema.json`。
-
-## 章节 Markdown 规范
-
-### 文件命名
-
-推荐命名：
-
-- `03_chapters/ch01_plan.md`
-- `03_chapters/ch01_draft.md`
-- `03_chapters/ch02_plan.md`
-- `03_chapters/ch02_draft.md`
-
-兼容命名：
-
-- `03_chapters/ch1_intro.md`
-- `03_chapters/ch2_literature.md`
-- `03_chapters/ch3_method.md`
-- `03_chapters/ch4_experiments.md`
-- `03_chapters/ch5_conclusion.md`
-
-`scripts/apply_markdown_to_xml.py` 的读取规则：
-
-1. 优先读取 `03_chapters/ch*_draft.md`。
-2. 如果没有 `_draft.md`，读取 `03_chapters/ch*.md`，但排除 `*_plan.md`。
-3. 按文件名中的章节数字排序。
-4. 根据 Markdown 的 `#`、`##`、`###` 重建一级、二级、三级标题结构。
-5. 顶层 `# 第X章 标题` 只作为文件导航，写入 Word 时不会作为正文段落重复写入。
-
-### 章节正文结构
-
-新生成章节正文时使用中文标题，结构如下：
-
-```markdown
-# 第1章 绪论
-<!-- chapter_id: ch_1 -->
-
-## 1.1 研究背景
-
-这里写中文正文。正文应说明问题背景、研究意义和已有材料依据。
-
-## 1.2 国内外研究现状
-
-这里写中文正文。需要引用但暂无文献时，使用 [[REF:KEYWORD_PLACEHOLDER: 关键词]]。
-
-### 1.2.1 某类方法
-
-这里写三级小节正文。
-
-## 1.3 本文主要工作
-
-- 使用中文列出本文工作。
-- 不写没有依据的实验指标。
-```
-
-章节 Markdown 的规则：
-
-- 标题和正文默认中文。不要新生成 `Chapter 1 Introduction` 这类英文标题，除非用户明确要求英文论文。
-- 二级标题使用 `##`，三级标题使用 `###`。不要在正文段落里伪造标题。
-- 不要手写最终 Word 中的图号、表号、公式号或参考文献编号。
-- 可以在 Markdown 中写 `第1章`、`1.1` 方便阅读；写入 Word 时默认去掉手动编号，避免模板自动编号重复。
-- 已确认正文写入 `chXX_draft.md`。章节目标、素材、待补问题写入 `chXX_plan.md`，不要混在正文草稿里。
-- 如果用户已有英文标题或英文草稿，先确认是翻译成中文还是保留原文。
-
-## 占位符规范
-
-写正文时使用这些占位符，不要硬编码编号：
-
-- `[[FIG:图的稳定描述]]`：生成图片占位和图题。
-- `[[TBL:表的稳定描述]]`：生成表题和真实 Word 表格。
-- `[[EQ:公式]]`：生成显示公式和章内编号。
-- `[[SYM:公式或符号]]`：生成行内数学符号。
-- `[[REF:n]]`：生成参考文献交叉引用。
-- `[[REF:KEYWORD_PLACEHOLDER: 关键词]]`：文献未补齐时的临时引用。
-- `[[REF_FIG:图的稳定描述]]`：正文中引用图。
-- `[[REF_TBL:表的稳定描述]]`：正文中引用表。
-- `[[CODE:路径或说明]]`：标记代码资产需求。
-- `[[DATA:路径或说明]]`：标记数据资产需求。
-
-`[[TABLE:...]]`、`[[FIGURE:...]]`、`[[EQUATION:...]]` 可以被脚本兼容为 `[[TBL:...]]`、`[[FIG:...]]`、`[[EQ:...]]`，但新写内容必须使用标准形式。
-
-## 写作模式
-
-- **从零生成初稿**：先读 `references/writing_workflow.md`，确认题目、方法、创新点、真实性边界，再生成大纲、计划和中文初稿。
-- **边做边写**：先写章节计划和资产 TODO，稳定章节可先写，实验结果、指标和图表缺失处标记待补。
-- **续写已有论文**：先确认是否反解析已有 Word。若用户同意，运行反解析并让用户查看 `03_chapters/`、`04_figures/`、`05_tables/` 后，再决定续写、润色、补章节或导出。
-- **资产转写论文**：先读 `06_code/`、`07_data/`、`04_figures/`、`05_tables/` 和 manifest，确认资产含义，再转写为方法、实验或结果分析。
-- **格式整理与 Word 输出**：先清洗 Markdown、规范占位符和引用，再执行 XML 写回、DOCX 生成和校验。
-- **已有 Word 资产盘点**：只抽取章节、图、表、公式和 manifest，不直接重写正文。适合用户想先了解已有论文可复用内容的情况。
-- **Round-trip 校验**：反解析后再写回 Word，对比章节、图、表、公式和资源数量。适合验证模板兼容性或脚本改动。
-
-## 写作要求
-
-- 使用中文硕士论文语体：客观、克制、准确、逻辑清楚。
-- 第一章和第二章优先依据 `08_refs/`、用户笔记和已有论文内容。
-- 第三章优先依据代码、系统设计、算法流程、公式和用户确认的方法描述。
-- 第四章优先依据真实数据、实验日志、指标表和图表。没有数据时不得编造结论。
-- 第五章总结要与前文工作一致，不扩大贡献，不新增未出现的方法或实验。
-- 术语必须一致。用户自定义模块名要写成“本文提出/设计/称为”，不要伪装成领域通用术语。
-- 不确定内容要标记“待确认”或“待补充”，并记录到 `00_project/project_manifest.md` 或对应章节计划。
-
-## 脚本命令
-
-推荐流程：先创建一个新的论文项目文件夹，进入该文件夹，再运行初始化和后续命令。这样 `00_project/`、`03_chapters/`、`10_output/` 等目录都会生成在这个项目文件夹里。
-
-```bash
-mkdir <project_dir>
-cd <project_dir>
-python <skill_dir>/scripts/init_thesis_workspace.py . --template <docx_path>
-```
-
-如果用户提供的是已有论文内容，并且明确希望解析它，可以直接运行可选反解析入口：
-
-```bash
-python <skill_dir>/scripts/reverse_parse_docx.py <project_dir> --docx <user_thesis.docx>
-```
-
-反解析完成后先让用户选择下一步：只查看资产、继续写作、修订润色、补缺失章节、重新导出 Word，或执行 round-trip 校验。不要默认立刻重写全文。
-
-在项目文件夹内运行时，项目参数使用 `.`，脚本路径使用 Skill 的绝对路径：
-
-```bash
-python <skill_dir>/scripts/flat_opc_converter.py toxml 01_template/original_template.docx 01_template/template.flat.xml
-python <skill_dir>/scripts/parse_template_xml.py 01_template/template.flat.xml 09_state/parsed_structure.json
-python <skill_dir>/scripts/generate_planning_files.py .
-python <skill_dir>/scripts/apply_markdown_to_xml.py . --out 09_state/current_working.xml
-python <skill_dir>/scripts/build_new_docx.py . --name thesis_draft_v1.docx
-python <skill_dir>/scripts/validate_xml_docx.py .
-python <skill_dir>/scripts/reference_tools.py format <refs.json> --style "GB/T 7714"
-```
-
-也可以在 Skill 根目录运行脚本，但必须把 `<project_dir>` 写成论文项目文件夹的绝对路径，不要省略项目路径。
-
-可选命令：
-
-```bash
-python scripts/embed_figures_docx.py <input.docx> <output.docx> <figure1.svg> [figure2.svg ...]
-python scripts/reverse_parse_docx.py <project_dir> --docx <user_thesis.docx>
-```
-
-不要直接运行 `scripts/word_xml_core.py`，它是公共脚本导入的内部 Word/XML 引擎。
-
-## Word 生成前检查
-
-运行 `apply_markdown_to_xml.py` 前检查：
-
-- `03_chapters/` 至少有可读取的章节正文 Markdown。
-- `chXX_plan.md` 和 `chXX_draft.md` 责任分明，计划不混入最终正文。
-- 占位符使用标准形式，必要时已阅读 `references/placeholders.md`。
-- 参考文献未补齐处使用 `[[REF:KEYWORD_PLACEHOLDER: 关键词]]`。
-- 图表、代码、数据资产已在对应 manifest 中记录。
-- 如果项目来自反解析，检查 `09_state/reverse_parse_assets.json` 中图、表是否为 `usable=true`；只把可用资源当作真实资产。
-- `09_state/project_state.json` 结构合法，必要时参考 `assets/project_state.schema.json`。
-
-运行 `apply_markdown_to_xml.py` 后检查：
-
-- `09_state/current_content_manifest.json` 中的 `draft_files` 不是空数组。
-- `09_state/current_working.xml` 存在，且是 Flat OPC XML。
-- `python scripts/validate_xml_docx.py <project_dir>` 输出的章节数符合预期。
-
-运行 `build_new_docx.py` 后检查：
-
-- 新文件位于 `10_output/`。
-- 文件名不是 `original_template.docx`。
-- 校验通过后，向用户报告生成路径、读取了哪些章节文件、是否有待补资产。
-
-## 常见问题排查
-
-- 如果生成了 DOCX 但内容还是模板，先看 `09_state/current_content_manifest.json` 的 `draft_files` 是否为空。
-- 如果 `draft_files` 为空，检查章节正文是否命名为 `ch*.md`，且不是 `*_plan.md`。
-- 如果只有一章，检查 `09_state/project_state.json` 是否仍是模板解析出的旧结构；重新运行 `apply_markdown_to_xml.py` 会根据当前 Markdown 重建章节结构。
-- 如果 Word 没有出现表格，检查是否使用了标准 `[[TBL:...]]` 或 Markdown 表格。
-- 如果反解析后的公式变成空泛占位，重新运行最新版 `reverse_parse_docx.py`；正常结果应是 `[[EQ:真实公式]]` 或 `[[SYM:真实符号]]`，不应只有 `[[EQ:公式]]`。
-- 如果引用显示异常，检查是否使用了 `[[REF:n]]` 或 `[[REF:KEYWORD_PLACEHOLDER: 关键词]]`，并阅读 `references/reference_rules.md`。
-- 如果公式中残留反斜杠命令，检查公式是否超出 `references/placeholders.md` 支持的有限 LaTeX 语法。
-
-## 安全规则
-
-- 永不覆盖 `01_template/original_template.docx`。
-- 每次写回 XML 前，如果 `09_state/current_working.xml` 已存在，保留时间戳快照。
-- 写回失败时保留 Markdown、manifest、`project_state.json` 和上一个 XML 快照。
-- 只在用户确认或任务明确要求时生成最终 DOCX。
-- 对用户未确认的数据、结论、文献和创新点保持保守表达。
-
-
-## Word/XML 写回规则
-
-- 保留模板中的目录、表格目录和插图目录字段，不要删除或重建这些 front matter 字段。正文写回只替换摘要内容；目录、表格目录和插图目录依赖 Word 的 `w:updateFields=true` 和 dirty field 标记刷新。
+- 不覆盖 `examples/` 中的原始教务处文件
+- 每次写回 XML 前保留时间戳快照
+- 对未确认的数据、结论、文献保持保守表达
+- 生成最终 DOCX 前须用户确认内容

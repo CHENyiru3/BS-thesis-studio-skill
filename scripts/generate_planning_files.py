@@ -89,7 +89,7 @@ def generate(project_dir: str | Path) -> None:
     if parsed_path.exists() and not state.get("thesis", {}).get("chapters"):
         parsed = json.loads(parsed_path.read_text(encoding="utf-8"))
         state["thesis"] = {
-            "title": state.get("thesis", {}).get("title") or "未命名硕士论文",
+            "title": state.get("thesis", {}).get("title") or "未命名 ZJE 本科毕业论文",
             "chapters": parsed.get("chapters") or default_outline(),
         }
     chapters = state.get("thesis", {}).get("chapters") or default_outline()
@@ -106,7 +106,7 @@ def generate(project_dir: str | Path) -> None:
             draft_path.write_text(make_draft(ch), encoding="utf-8")
 
     index = project / "00_project" / "thesis_master_index.md"
-    thesis_title = state.get("thesis", {}).get("title") or "未命名硕士论文"
+    thesis_title = state.get("thesis", {}).get("title") or "未命名 ZJE 本科毕业论文"
     index.write_text(
         "# Thesis Master Index\n\n"
         f"Thesis title: {thesis_title}\n\n"

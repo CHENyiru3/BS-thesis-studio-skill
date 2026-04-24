@@ -1,46 +1,85 @@
-# Project Manifest
+# Project Manifest — ZJE 本科毕业论文
 
-## Basic Facts
+## 基本信息
 
-- Thesis title:
-- Degree type: Master's thesis
-- School/template: Southeast University style template
-- Discipline:
-- Research direction:
-- Research object:
-- Core method:
-- Innovation point:
+- 学生姓名：
+- 学号：
+- 导师姓名：
+- 导师职称：
+- 论文题目（中文）：
+- 论文题目（英文）：
+- 专业：生物医学 / 生物信息学
+- 学院：浙江大学爱丁堡大学联合学院（ZJE）
 
-## User Status
+## IBMS10008 英文论文状态
 
-- Current stage:
-- Writing mode:
-- Existing thesis material:
-- Target output:
-- Simulation/example data allowed:
+- 英文论文是否完成：已提交 / 进行中 / 未开始
+- Abstract 是否定稿：已完成 / 待定
+- 英文论文 Word/PDF 路径：
+- 各章节完成状态：
+  - [ ] Introduction
+  - [ ] Methods
+  - [ ] Results
+  - [ ] Discussion
+  - [ ] Conclusion
+  - [ ] References
 
-## Workspace
+## Project Preview 状态
 
-- Template source: `01_template/original_template.docx`
-- Current Word output:
-- Current XML state: `09_state/current_working.xml`
+- 文献综述是否完成：已完成 / 进行中 / 未开始
+- 开题报告是否完成：已完成 / 进行中 / 未开始
+- Preview 材料路径：
+- 是否需要根据 Dissertation 主题调整 Preview 内容：否 / 是（说明）
 
-## Existing Assets
+## 当前写作阶段
 
-| Type | Location | Related Chapter | Status | Notes |
-| --- | --- | --- | --- | --- |
-| References | `08_refs/` |  |  |  |
-| Code | `06_code/` |  |  |  |
-| Data | `07_data/` |  |  |  |
-| Figures | `04_figures/` |  |  |  |
-| Tables | `05_tables/` |  |  |  |
-| Drafts/notes |  |  |  |  |
+- 当前最紧迫任务：英文论文迁移 / 填写 Part 2 模板 / 填写附件表格 / 查重 / 准备答辩
+- 目标版本：查重版 / BB 电子版 / 纸质存档版
 
-## Missing Assets
+## 附件完成状态
 
-| Needed Item | Related Chapter | Why Needed | Owner | Status |
-| --- | --- | --- | --- | --- |
+| 附件 | 文件 | 状态 | 说明 |
+|------|------|------|------|
+| 附件1 | 毕业论文任务书 | 待填写/已填写 |  |
+| 附件2 | 第二部分模板 | 待填写/已填写 |  |
+| 附件3 | 文献综述和开题报告考核表 | 待填写/已填写 |  |
+| 附件6 | 承诺书 | 待填写/已填写 |  |
+| 附件8 | 第一部分模板 | 待填写/已填写 |  |
+| 附件9 | 专家评阅意见表 | 待填写/已填写 |  |
+| 附件10 | 现场答辩记录表 | 待填写/已填写 |  |
+| 附件11 | 毕业论文考核表 | 待填写/已填写 |  |
+| 附件17 | 中文查重报告 | 待上传 |  |
 
-## Confirmed Assumptions
+## 已有资产
 
-- 
+| 类型 | 路径 | 章节关联 | 状态 | 备注 |
+|------|------|---------|------|------|
+| 英文论文 Word/PDF |  | 全文 |  |  |
+| Preview 材料 |  | Part 2 |  |  |
+| 参考文献列表 |  |  |  |  |
+| 图片 |  |  |  |  |
+| 表格 |  |  |  |  |
+| Dissertation feedback |  | 附件9 |  |  |
+| Preview feedback |  | 附件3 |  |  |
+| Oral Presentation feedback |  | 附件11 |  |  |
+
+## 缺失资产
+
+| 缺失项 | 关联章节 | 原因 | 处理方式 | 状态 |
+|--------|---------|------|---------|------|
+| 中文摘要翻译 | 第一部分 | 需翻译英文 Abstract | 用户翻译或 AI 辅助 |  |
+| 正文翻译 | 第一部分各章 | 需翻译英文章节正文 | 用户翻译或 AI 辅助 |  |
+| 外文翻译原文 | 第二部分 | 需选取相关论文 | 用户选取 |  |
+
+## 关键决策记录
+
+| 日期 | 决策 | 依据 | 备注 |
+|------|------|------|------|
+|  |  |  |  |
+
+## 写作边界
+
+- 是否允许意译（非逐字翻译）：允许 / 不允许
+- 参考文献列表来源：用户提供 / 需辅助检索
+- 图表处理方式：直接迁移 / 重新制作
+- 是否已有 Dissertation feedback：是（请附路径）/ 否

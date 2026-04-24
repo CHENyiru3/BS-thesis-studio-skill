@@ -1,71 +1,191 @@
-# Master Thesis Studio Skill
+# ZJE 本科毕业论文（设计）——全流程指南
 
-面向东南大学的中文硕士论文写作与 Word 自动生成的 Codex Skill，默认适配东南大学风格硕士论文 Word 模板。它把论文创作流程拆成两层：先通过对话确认题目、章节、资产和写作边界，再通过内置 Python 脚本把 Markdown 内容安全写入 Word 模板，生成新的 `.docx` 文件，打开时出现任何弹窗都点击是即可。
+> **浙江大学爱丁堡大学联合学院**本科毕业论文写作助手。
+>
+> 如果你不知道从哪开始——先看 `examples/README.md`，里面有 23 步的完整时间线。
 
-## 模板来源
- - 模板修改自https://seuthesis-word.github.io/ ，目前在图表目录和封面上尚未完全完成，请勿直接使用模板带封面的word，修改后的模板文件已存放在examples/中，可以在完成后再额外添加封面等摘要之前的内容。
-## 主要能力
+---
 
-- 初始化论文项目工作区，创建章节、图表、代码、数据、参考文献、状态文件和输出目录。
-- 引导用户确认题目、研究方向、当前完成度、已有资产、章节框架和写作模式。
-- 支持从零生成初稿、边做边写、续写已有论文、根据代码和数据转写论文、格式整理与 Word 输出。
-- 使用 manifest 管理参考文献、图、表、代码、数据、公式和待补材料。
-- 将确认后的 Markdown 写入 Flat OPC XML，再构建新的 Word 文档，不覆盖原始模板。
-- 支持图题、表题、三线表、公式编号、参考文献、交叉引用、页眉页脚和目录字段刷新。
+## 一个总原则：你先写英文，再迁移成中文
 
-## 适用场景
+ZJE 和其他学院不一样——你先在 **IBMS10008** 课程写完**英文**论文，然后再把英文翻译成中文，填进教务处的模板。
 
-- 只有论文题目或方向，希望先生成一个可修改的完整初稿。
-- 已经写了一部分论文，希望继续补写或重写薄弱章节。
-- 已有代码、数据、实验记录、图表，希望转写成论文方法和实验章节。
-- 已有 Word 模板，希望自动化写入章节、图表、公式和参考文献。
-- 需要基于东南大学风格模板生成安全、可追溯的新 Word 副本。
+所以你的桌面应该是这样的：
 
-## 目录结构
-
-```text
-master-thesis-studio-skill/
-├─ SKILL.md
-├─ assets/
-│  └─ project_state.schema.json
-├─ examples/
-│  └─ Template.docx
-├─ references/
-│  ├─ writing_workflow.md
-│  ├─ xml_mapping_spec.md
-│  ├─ placeholders.md
-│  └─ reference_rules.md
-├─ scripts/
-│  ├─ init_thesis_workspace.py
-│  ├─ flat_opc_converter.py
-│  ├─ parse_template_xml.py
-│  ├─ generate_planning_files.py
-│  ├─ apply_markdown_to_xml.py
-│  ├─ build_new_docx.py
-│  ├─ embed_figures_docx.py
-│  ├─ validate_xml_docx.py
-│  ├─ reference_tools.py
-│  └─ word_xml_core.py
-└─ templates/
-   ├─ project_manifest.md
-   ├─ thesis_master_index.md
-   ├─ figures_manifest.md
-   ├─ tables_manifest.md
-   ├─ code_manifest.md
-   └─ data_manifest.md
+```
+英文论文（IBMS10008 已完成）          ← 你已经有的
+    ↓ 翻译
+中文内容（致谢/摘要/正文5章/参考文献）  ← 需要你写 or 已经翻好了
+    ↓ 填入模板
+附件8（第一部分：论文主体）
+    + 附件2（第二部分：文献综述+开题报告+外文翻译）
+    + 附件1/3/6/9/10/11/17（各种表格）
+    ↓
+三个版本输出（内容完全一样，只是筛选哪些附件装进去）
 ```
 
-## 环境要求
+---
 
-- Python 3.10 或更高版本。
-- Python 依赖：`lxml`。
-- 一个 `.docx` 论文模板或已有论文草稿。
-- 如需在 Word 中看到目录、表格目录、插图目录和交叉引用的最终页码，打开 Word 后可全选并按 `F9` 刷新域。
+## 你要干什么——按顺序来
 
-安装依赖：
+### 第 1 步：看全局索引
 
-```bash
-pip install lxml
-```
+打开 **[examples/中文论文材料顺序-全局索引.xlsx](examples/中文论文材料顺序-全局索引.xlsx)**，把两大部分结构、三个版本的区别看明白。这是总地图，花 10 分钟看完后面省很多事。
 
+### 第 2 步：完成 Project Preview 课程
 
+截止日期：**2026年2月28日**
+
+拿到你的文献综述（Literature Review）和开题报告（Proposal），这些是英文写的，后面会直接塞进附件2。
+
+参考文件：
+- [examples/次要文件/本次同学英文论文.docx](examples/次要文件/本次同学英文论文.docx) —— 看看别人的完成状态
+- [examples/附件2-第二部分模板-文献综述开题报告外文翻译.doc](examples/附件2-第二部分模板-文献综述开题报告外文翻译.doc) —— 你最后要填进去的模板
+
+### 第 3 步：填附件2（文献综述 + 开题报告 + 外文翻译）
+
+把第 2 步拿到的 Preview 内容直接贴进去——**英文原文，不要翻译**。
+
+编排顺序（不能换）：
+1. 文献综述
+2. 开题报告
+3. 外文翻译（你找一篇学术研究论文，自己翻成中文）
+4. 外文原文（截图或粘贴）
+
+格式要求：
+- 中文字体仿宋，英文 Times New Roman，1.5 倍行距
+- 各章之间分页
+
+看这里的详细规则：[examples/第二部分正文编写说明-文献综述开题报告外文翻译规则.pdf](examples/第二部分正文编写说明-文献综述开题报告外文翻译规则.pdf)
+
+### 第 4 步：填附件1（任务书）
+
+把项目描述（Project Description）的英文内容摘进去，日期填 2026 年 1 月 12 日，控制在一页。
+
+模板：[examples/附件1-毕业论文任务书-空白表格.docx](examples/附件1-毕业论文任务书-空白表格.docx)
+说明：[examples/附件1-毕业论文任务书.pdf](examples/附件1-毕业论文任务书.pdf)
+
+### 第 5 步：填附件11（毕业论文考核表）
+
+导师评语让导师写。答辩 feedback 从 Blackboard 复制原文粘贴（**不要翻译**）。
+
+说明：[examples/附件11-毕业论文考核表.pdf](examples/附件11-毕业论文考核表.pdf)
+
+### 第 6 步：填附件3（文献综述考核表）
+
+把 Project Preview 的 feedback 从 Blackboard 复制粘贴进去（**不要翻译**）。
+
+模板：[examples/附件3-文献综述和开题报告考核表-空白表格.docx](examples/附件3-文献综述和开题报告考核表-空白表格.docx)
+
+### 第 7 步：把英文论文正文翻译成中文（核心工作）
+
+这是最花时间的一步，把英文论文的以下章节翻译成中文，填入附件8模板：
+
+| 英文章节 | 中文章节 |
+|----------|----------|
+| Abstract | 中文摘要（300-600字） |
+| Acknowledgement | 致谢 |
+| Introduction | 引言 |
+| Methods | 材料与方法 |
+| Results | 结果 |
+| Discussion | 讨论 |
+| Conclusion | 结论 |
+
+**如果你已经有翻译好的内容**（比如 Markdown 文件），参考：
+- [sample_thesis/translation_parts/](sample_thesis/translation_parts/) —— 示例：8 个中文章节 + 11 张图片
+
+格式要求（附件8第一部分模板）：
+- 章标题：仿宋三号加黑
+- 节标题：小三号仿宋加黑
+- 正文：仿宋小四号，1.5 倍行距
+- 奇数页眉：论文名（居右）
+- 偶数页眉："浙江大学本科生毕业论文（设计）"（居左）
+
+模板：[examples/附件8-第一部分模板-毕业论文主体.doc](examples/附件8-第一部分模板-毕业论文主体.doc)
+
+### 第 8 步：整理参考文献
+
+按 **GB/T 7714-2015** 格式。详细规则看：[references/reference_rules.md](references/reference_rules.md)
+
+### 第 9 步：填承诺书 + 简历 + 封面
+
+- 承诺书（附件6）：[examples/附件6-承诺书-空白表格.docx](examples/附件6-承诺书-空白表格.docx)
+- 封面说明：[examples/附件8-大封面-格式说明.pdf](examples/附件8-大封面-格式说明.pdf)
+- 格式参考：[examples/附件8-第一部分封面+大封面-格式参考.pdf](examples/附件8-第一部分封面+大封面-格式参考.pdf)
+
+### 第 10 步：查重（**只有一次机会，≤ 10%**）
+
+先做一个查重专用版，**删掉**承诺书、参考文献、个人简历。用 Word 保存，**禁止 PDF**。
+
+登录：http://check.cnki.net/pmlc/ → 学生入口
+用户名：学号
+密码：`zje`（小写）+ 身份证后 8 位（第 9 位 X 大写）
+
+查重地址和说明：[examples/附件17-中文查重报告-打印说明.pdf](examples/附件17-中文查重报告-打印说明.pdf)
+
+### 第 11 步：答辩 + 填答辩记录表
+
+答辩现场填写：[examples/附件10-现场答辩记录表-空白表格.doc](examples/附件10-现场答辩记录表-空白表格.doc)
+
+### 第 12 步：专家评阅
+
+把 Dissertation 的 feedback 粘贴到：[examples/附件9-专家评阅意见表-空白表格.doc](examples/附件9-专家评阅意见表-空白表格.doc)
+
+### 第 13 步：生成三个版本
+
+同一篇论文，不同附件组合：
+
+| 版本 | 装什么 |
+|------|--------|
+| **查重电子版** | 封面 + 致谢 + 摘要 + 目录 + 正文（去掉了参考文献和简历） |
+| **BB提交电子版** | 全部正文 + 所有附件，但不要任务书/考核表/查重报告等内部文件 |
+| **纸质存档版** | 全部 20 项材料按顺序装订，去打印店印 |
+
+打印地址：海宁校区校内打印店
+挂账口令："ZJE + 你的名字 + 毕业论文"
+封面纸张：浅黄色皮纹纸
+装订：1 份
+
+---
+
+## 红线（绝对不能碰）
+
+| 规则 | 后果 |
+|------|------|
+| **查重率 > 10%** | 影响毕业（原则上只查一次） |
+| **承诺书不签字** | 材料退回 |
+| **查重版用 PDF** | 系统乱码 |
+| **第二部分顺序搞错** | 格式不合格 |
+| **查重版没删参考文献** | 重复率偏高 |
+
+---
+
+## 文件索引
+
+| 你要找什么 | 看哪个文件 |
+|------------|-----------|
+| 23 步完整时间线 | [examples/README.md](examples/README.md) |
+| 全局材料顺序 | [examples/中文论文材料顺序-全局索引.xlsx](examples/中文论文材料顺序-全局索引.xlsx) |
+| 附件8模板（论文正文） | [examples/附件8-第一部分模板-毕业论文主体.doc](examples/附件8-第一部分模板-毕业论文主体.doc) |
+| 附件2模板（文献综述+开题报告） | [examples/附件2-第二部分模板-文献综述开题报告外文翻译.doc](examples/附件2-第二部分模板-文献综述开题报告外文翻译.doc) |
+| 参考文献格式 | [references/reference_rules.md](references/reference_rules.md) |
+| 格式规范（字体/字号/行距） | [references/placeholders.md](references/placeholders.md) |
+| 翻译示例 | [sample_thesis/translation_parts/](sample_thesis/translation_parts/) |
+| 官方编写规则 | [examples/浙江大学本科毕业论文编写规则.pdf](examples/浙江大学本科毕业论文编写规则.pdf) |
+| 优秀论文参考 | [examples/往届学生优秀论文案例-参考.pdf](examples/往届学生优秀论文案例-参考.pdf) |
+
+---
+
+## 和 Claude 对话
+
+直接告诉 Claude 你做到哪一步了，比如：
+
+- "帮我填附件1任务书"
+- "我的英文论文在这里，帮我翻译 Introduction"
+- "查重版做好了，帮我检查一下有没有不该装进去的东西"
+
+Claude 会按 `examples/README.md` 里的 23 步流程引导你。
+
+---
+
+**2026 届 ZJE 本科毕业论文专用**

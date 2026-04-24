@@ -15,7 +15,7 @@ TEMPLATES = SKILL_ROOT / "templates"
 
 DIRS = [
     "00_project",
-    "01_template",
+    "00_zje_templates",  # ZJE 官方模板（附件1~11），建议将附件 .docx 文件复制到此目录
     "03_chapters",
     "04_figures",
     "05_tables",
@@ -60,10 +60,10 @@ def init_workspace(project_dir: str | Path, template: str | Path | None = None, 
         src = Path(template).resolve()
         if not src.exists():
             raise SystemExit(f"Template not found: {src}")
-        original = project / "01_template" / "original_template.docx"
+        original = project / "00_zje_templates" / "original_template.docx"
         if not original.exists() or force:
             shutil.copy(src, original)
-        template_xml = project / "01_template" / "template.flat.xml"
+        template_xml = project / "00_zje_templates" / "template.flat.xml"
         docx_to_flat_opc_xml(original, template_xml)
         parsed = parse_template_xml(template_xml)
         (project / "09_state" / "parsed_structure.json").write_text(
@@ -75,7 +75,7 @@ def init_workspace(project_dir: str | Path, template: str | Path | None = None, 
         "timestamp": datetime.now().isoformat(),
         "step": "initialized",
         "thesis": {
-            "title": "未命名硕士论文",
+            "title": "未命名 ZJE 本科毕业论文",
             "chapters": parsed.get("chapters") or default_outline(),
         },
         "references": [],
@@ -93,7 +93,7 @@ def json_dumps(data: object) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description="Initialize a portable master's thesis workspace.")
+    ap = argparse.ArgumentParser(description="Initialize a ZJE undergraduate thesis workspace.")
     ap.add_argument("project_dir")
     ap.add_argument("--template", help="Optional source .docx template or existing thesis draft.")
     ap.add_argument("--force", action="store_true", help="Allow writing into an existing workspace.")

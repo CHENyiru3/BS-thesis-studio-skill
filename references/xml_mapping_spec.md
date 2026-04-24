@@ -1,67 +1,139 @@
-# XML Mapping Spec
+# XML Mapping Spec — ZJE 本科毕业论文
 
-The Word execution layer uses Flat OPC XML, not Word 2003 XML and not ODF flat XML.
+Word 执行层使用 Flat OPC XML，不是 Word 2003 XML 也不是 ODF flat XML。
 
-## Required Parts
+## 必需部件
 
 - `/word/document.xml`
 - `/word/styles.xml`
 - `/word/_rels/document.xml.rels`
-- `/word/settings.xml` when field refresh can be enabled
+- `/word/settings.xml`（启用域刷新时需要）
 
-## Heading Detection
+---
 
-Detect heading styles with the same priority as the source project:
+## ZJE 文档结构
 
-1. Paragraph styles with `w:outlineLvl` 0, 1, and 2 map to levels 1, 2, and 3.
-2. Prefer names containing `Heading 1`, `Heading1`, `标题 1`, or `标题1`.
-3. Prefer IDs containing `Heading1` or equal to the numeric level.
-4. Fallback to the first outline-level style found.
+ZJE 本科毕业论文由两大部分组成，每部分有独立的页眉/页脚/页码规则。
 
-## Section Mapping
+### 前置部分（无页眉，罗马页码）
 
-Classify body nodes as:
+大封面 → 承诺书 → 致谢 → 中文摘要 → 英文摘要 → 目录
 
-- `heading`: level 1-3 body heading.
-- `front_title`: 摘要, Abstract, 目录.
-- `toc_title`: 插图目录, 表格目录.
-- `back_title`: 致谢, 参考文献, 作者简介, 附录, 攻读期间发表.
-- `paragraph`: normal body paragraph.
-- `table`: `w:tbl`.
-- `image_placeholder`: paragraph containing drawing/pict/VML shape.
-- `equation`: paragraph containing OMML.
-- `caption_figure` / `caption_table`: paragraph containing SEQ field.
+- **页眉**：无
+- **页脚**：罗马数字（I, II, III...），居中
+- **字体**：中文仿宋，英文 Times New Roman，小四号，1.5倍行距
 
-## Reverse Parse Behavior
+### 第一部分：毕业论文（设计）
 
-Reverse parsing converts an existing user Word into a project workspace, but it is optional and should run only after user confirmation.
+第一部分封面 → 正文（含作者简历）
 
-- Use the same heading detection rules to assign paragraphs, figures, tables, and equations to the current level-1 chapter. Do not treat front matter, TOC, list-of-figures, list-of-tables, or loose placeholders as chapter assets.
-- A real embedded image is usable only when its paragraph contains a drawing/pict/VML relationship and the target media exists in `word/media`. Extract usable images to `04_figures/` and record chapter, caption, source relationship, file path, and `usable` in `figures_manifest.md` and `09_state/reverse_parse_assets.json`.
-- Figure captions usually follow the image paragraph, so prefer the next adjacent caption for images; fall back to the previous adjacent caption only if needed.
-- Word tables should be mapped under the current chapter. Prefer the previous adjacent table caption, then the next adjacent caption. Extract table cells into both Markdown and CSV under `05_tables/`, and mark empty or placeholder-like tables as not usable.
-- Chapter drafts should represent real tables as `[[TBL:caption]]` followed by a Markdown pipe table. On writeback, this real Markdown table takes priority over fallback generated rows.
-- Extract OMML formula text from `m:t`, not only from normal `w:t`. Standalone equations become `[[EQ:formula]]`; inline math becomes `[[SYM:formula]]`.
-- Strip existing equation numbers such as `#(2.1)` during reverse parsing. The writer regenerates equation numbers as `(chapter.index)` during XML writeback.
-- Do not emit generic formula placeholders such as `[[EQ:公式]]` when OMML text is available. If OMML text is missing, mark the formula as needing manual repair.
+- **页眉**：
+  - 奇数页：`[[论文中文题目]]`（居右）
+  - 偶数页：`浙江大学本科生毕业论文（设计）`（居左）
+- **页脚**：阿拉伯数字（1, 2, 3...），居中，连续编码
+- **字体**：中文仿宋，英文 Times New Roman，小四号，1.5倍行距
 
-## Writeback Behavior
+### 第二部分：文献综述和开题报告
 
-- Preserve front matter and back matter.
-- Preserve the template's TOC, list-of-tables, and list-of-figures field paragraphs. During front-matter cleanup, replace only Abstract/摘要 body text; do not delete the existing TOC/list field result paragraphs because Word will refresh them through `w:updateFields=true`. Mark field begins dirty so Word refreshes the cached TOC/list content on open or when fields are updated.
-- Replace the body range from the first non-front level-1 heading up to the first back matter title or body `sectPr`.
-- Clone paragraph prototypes from the template for heading, body, caption, and reference nodes; generate `[[TBL:...]]` as a real Word table rather than cloning stale template sample tables.
-- Strip manual heading numbering before writing Word headings by default. This prevents numbered templates from producing duplicated headings such as `第五章 第5章 总结与展望`.
-- Discard Markdown file headers such as `# 第5章 总结与展望`; they are not body content.
-- Normalize Chinese/English spacing in body text while keeping spaces inside English phrases.
-- Convert supported LaTeX-style formula tokens before Word writeback. Inline `[[SYM:...]]` and display `[[EQ:...]]` should emit OMML structures for superscript, subscript, and fraction nodes where possible; raw commands such as `\in` and `\times` should not remain visible in Word.
-- Display `[[EQ:...]]` formula numbers as `(chapter.index)` with an ASCII period, for example `(3.1)`, unless `styleSettings.equationSeparator` is explicitly set for a different institution rule.
-- Center figure placeholders, figure captions, and table captions with `w:jc w:val="center"`.
-- Generate tables as three-line thesis tables matching the minimal template: table top border `single sz=12`, table bottom border `single sz=12`, first-row cell bottom border `single sz=4`, and left/right/insideH/insideV borders `none`. Set every table cell paragraph to `w:jc=center` and every cell to `w:vAlign=center`.
-- When the reference prototype has `w:numPr`, preserve it and do not write explicit `[n]` text. The bundled template uses `numId=4`, `lvlText="[%1]"`, and paragraph indentation `left=425` / `hanging=425`; cloned entries should keep that automatic numbering and hanging indent. Body citations should use `REF bookmark \r \h` so Word resolves the paragraph number. Only use manual `[n]` labels as a fallback when no reference numbering exists in the template.
-- Treat both standalone `w:sectPr` nodes and paragraph-contained `w:pPr/w:sectPr` nodes as protected section breaks. Never delete them while clearing TOC/list entries, replacing body content, or replacing reference entries, because they preserve the template's header/footer links and page-number restarts.
-- When a header uses a `STYLEREF` field for the level-1 heading, update the cached field-result text to the current first chapter title so the header is reasonable before Word refreshes fields.
-- Render `[[REF_FIG:...]]` and `[[REF_TBL:...]]` to chapter-local `图X-Y` and `表X-Y` text before creating paragraphs.
-- Insert `w:updateFields w:val="true"` into settings so Word refreshes TOC/fields.
-- Update header/footer STYLEREF fields to the detected level-1 heading style.
-- Preserve XML intermediate files in `09_state/`.
+第二部分封面1 → 第二部分封面2 → 指导教师具体要求 → 目录 → 文献综述 → 开题报告 → 外文翻译 → 外文原文 → 考核表 → 查重报告 → 评阅意见 → 答辩记录
+
+- **页眉**（正文页）：同第一部分（奇数右/偶数左）
+- **页脚**：阿拉伯数字，连续编码（从第一部分末尾接续）
+- **目录页**：罗马页码，居中
+- **外文原文**：不编入目录页码，但正文页码连续
+
+---
+
+## 标题检测
+
+检测标题样式的优先级：
+
+1. 具有 `w:outlineLvl` 0/1/2 的段落样式分别对应一/二/三级标题
+2. 优先名称包含 `Heading 1`、`Heading1`、`标题 1`、`标题1`
+3. 优先 ID 包含 `Heading1` 或等于数字级别
+4. 最后回退到第一个 outline-level 样式
+
+---
+
+## 节点分类
+
+将 body 节点分类为：
+
+| 类型 | 说明 |
+|------|------|
+| `heading` | 1–3级正文标题 |
+| `front_title` | 大封面、承诺书、致谢、摘要、目录 |
+| `part1_cover` | 第一部分封面 |
+| `part2_cover` | 第二部分封面1/封面2 |
+| `toc_title` | 目录标题 |
+| `body` | 普通正文段落 |
+| `table` | `w:tbl`（三线表） |
+| `image_placeholder` | 包含 drawing/pict/VML shape 的段落 |
+| `equation` | 包含 OMML 的段落 |
+| `caption_figure` / `caption_table` | 包含 SEQ 域的段落（图注/表注） |
+| `back_matter` | 参考文献、附录、作者简历 |
+
+---
+
+## 反解析行为
+
+反解析将已有的 Word 转换为项目工作区，**仅在用户确认后执行**。
+
+- 使用相同的标题检测规则将段落、图片、表格、公式分配到当前章节
+- **前置部分、目录、图目录、表目录**不作为章节正文资产
+- 真实嵌入图片：仅当段落包含 drawing/pict/VML 关系且目标媒体存在于 `word/media` 时可用
+- 图注：优先使用与图片段落相邻的后续段落
+- 表格：优先使用与表格相邻的前后续注；空表或示例表标记为不可用
+- OMML 公式：从 `m:t` 提取，不从普通 `w:t` 提取
+- 解析出的公式须保留为 `[[EQ:公式]]` 或 `[[SYM:符号]]`，不要生成泛型 `[[EQ:公式]]`
+
+---
+
+## 写回行为
+
+- 保留前置部分和结尾部分不变
+- 替换正文范围：从第一个非前置的一级标题到第一个结尾部分标题
+- 克隆模板中 heading、body、caption、reference 节点的原型
+- 默认去除手动标题编号，防止模板自动编号产生重复（如 `第五章 第5章 总结`）
+- 丢弃 Markdown 文件中的文件级标题（如 `# 第5章 总结与展望`），不是正文内容
+- 正文文本中规范中英文间距，但保留英文短语内部空格
+
+---
+
+## ZJE 特有的写回规则
+
+### 第一部分正文（迁移自英文论文）
+- 标题：仿宋三号加黑（章）/ 小三号加黑（节）/ 四号加黑（子节）
+- 正文：仿宋小四号，1.5倍行距
+- 英文：Times New Roman 小四号，1.5倍行距
+- 图表标题：五号宋体加粗
+- 三线表：顶线/底线 `sz=12`，表头底线 `sz=4`，其余边框 `none`
+
+### 第二部分正文（来自 Preview 材料）
+- 文献综述和开题报告：**英文原文**，填入附件2模板
+- 外文翻译：中文，格式同第一部分正文
+- 外文原文：原文附最后（不编目录页码）
+
+### 公式编号
+- 显示公式编号形式：`(章节.编号)`，使用 ASCII 句点
+- 例如 `(3.1)`，不是 `(3-1)` 或 `(3－1)`
+
+### 页眉更新
+- 奇数页：检测当前章标题，设置为居右页眉
+- 偶数页：`浙江大学本科生毕业论文（设计）`，居左
+- 使用 STYLEREF 域时，更新缓存字段结果文本
+
+### 域刷新
+- 向 settings.xml 写入 `w:updateFields w:val="true"`，Word 打开时自动刷新目录和交叉引用
+
+---
+
+## Word 写回规则
+
+- 保留模板中的目录、表格目录和插图目录字段，不删除或重建
+- 正文写回只替换摘要内容；目录、表格目录和插图目录通过 `w:updateFields=true` 和 dirty field 标记刷新
+- 将 `[[TBL:...]]` 生成为真实 Word 三线表，不克隆模板中的过时示例表
+- 中心对齐图片占位、图片标题和表标题：`w:jc w:val="center"`
+- 生成三线表：顶线/底线 `single sz=12`，表头底线 `single sz=4`，其余边框 `none`
+- 引用原型有 `w:numPr` 时保留，不写显式 `[n]` 文本
+- `[[REF_FIG:...]]` 和 `[[REF_TBL:...]]` 先渲染为章级 `图X-Y` 和 `表X-Y` 文本再创建段落

@@ -1,16 +1,18 @@
-# Reference Rules
+# Reference Rules — ZJE 本科毕业论文
 
-Reference objects follow this shape:
+参考文献格式规范，适用 GB/T 7714-2015。
+
+## 参考文献对象格式
 
 ```json
 {
   "id": 1,
-  "description": "formatted citation text",
+  "description": "格式化的引用文本",
   "placeholder": "[[REF:...]]",
   "metadata": {
-    "title": "paper title",
-    "authors": ["Author A", "Author B"],
-    "journal": "journal or venue",
+    "title": "论文标题",
+    "authors": ["作者A", "作者B"],
+    "journal": "期刊名",
     "year": "2024",
     "volume": "1",
     "issue": "2",
@@ -21,39 +23,54 @@ Reference objects follow this shape:
 }
 ```
 
-## Formatting Styles
+## 格式样式
 
-The bundled `reference_tools.py` supports:
-
-- `GB/T 7714`
+`reference_tools.py` 支持：
+- `GB/T 7714`（ZJE 默认）
 - `APA`
 - `IEEE`
 - `MLA`
 
-Prefer structured metadata. If metadata is missing, preserve the original text and mark the entry as needing repair instead of dropping it.
+优先使用结构化 metadata。metadata 缺失时保留原始文本并标记为需修复。
 
-## Reference-Driven Writing
+## ZJE 特有说明
 
-- Chapter 1 and Chapter 2 should be written from `08_refs/`, user notes, and confirmed domain materials whenever possible.
-- Do not fabricate real-looking citations, authors, journals, DOIs, years, or publication venues.
-- If a claim needs literature support but no source exists yet, use `[[REF:KEYWORD_PLACEHOLDER: keywords]]` and record the missing source in the project manifest.
-- Literature review should explain the research problem, mainstream methods, limitations, and the thesis entry point; avoid empty author-by-author listing.
-- Use established domain terminology from references and user materials. Do not invent academic terms that do not exist in the field.
+### 第一部分正文的引用
+- 按 GB/T 7714-2015 标准执行
+- 顺序编码制或著者-出版年制均可，**全文必须统一**
+- 正文引用使用 `[[REF:n]]`，不要手写 `[1]`
 
-## Word Writeback
+### 第二部分（文献综述+开题报告）的引用
+- 文献综述和开题报告填入模板时，**保留英文原文中的引用格式**
+- 如需补充中文参考文献，按 GB/T 7714 处理
 
-- Prefer the template's automatic reference numbering. In `examples/Template.docx`, reference entries use paragraph numbering `[%1]` and hanging indentation `left=425` / `hanging=425`.
-- Do not prepend manual `[n]` text when the cloned reference paragraph already has `w:numPr`; otherwise Word can duplicate labels or lose the intended hanging indent.
-- Put a stable hidden bookmark such as `_Ref120001` in each reference paragraph and cite it with `REF _Ref120001 \r \h` so Word resolves the numbered paragraph label.
+### 外文翻译的引用
+- 翻译文中涉及的引用须一并翻译，格式按 GB/T 7714
+- 外文原文附在第二部分最后（不编入目录页码）
 
-## Optional Search
+## 参考文献驱动写作
 
-Use academic search only when the user explicitly asks for retrieval or provides an API key. Supported sources mirror the source project:
+- 第一章和第二章应优先依据 `08_refs/`、用户笔记和已有文献资料写作
+- **不要捏造真实文献**：作者名、期刊名、DOI、年份、发表场所均须有据可查
+- 如果某论点需要文献支撑但暂无来源，使用 `[[REF:关键词占位: 术语]]` 并在项目 manifest 中记录缺失来源
+- 文献综述围绕"问题—方法—不足—本文切入点"展开，不要仅罗列作者和年份
 
-- OpenAlex
-- Crossref
-- Semantic Scholar
-- arXiv
-- Serper Scholar
+## Word 写回规范
 
-No network access is required for the local Word/XML workflow.
+- 优先使用模板的自动编号。正文引用使用 `REF bookmark \r \h`，Word 自动解析编号段落标签
+- 不要在已有 `w:numPr` 的引用段落前手动加 `[n]` 文本，否则 Word 会重复标签
+- 在每个引用段落放置稳定书签（如 `_Ref120001`），供交叉引用使用
+
+## 引用字段说明
+
+| 字段 | 说明 |
+|------|------|
+| `title` | 论文/书籍标题 |
+| `authors` | 作者列表 |
+| `journal` | 期刊名或会议名 |
+| `year` | 出版年份 |
+| `volume` | 卷号 |
+| `issue` | 期号 |
+| `pages` | 页码范围 |
+| `doi` | DOI 标识符 |
+| `type` | 文献类型（journal-article、conference-paper、book 等） |

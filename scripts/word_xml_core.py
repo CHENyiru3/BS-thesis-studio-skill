@@ -1408,7 +1408,7 @@ def update_headers_and_footers(
         even_text = header.get("evenPageText")
         if even_text:
             for t in xml_root.findall(".//w:t", namespaces=NS):
-                if t.text and ("硕士学位论文" in t.text or "东南大学硕士学位论文" in t.text):
+                if t.text and ("本科生毕业论文" in t.text or "硕士学位论文" in t.text or "毕业论文（设计）" in t.text):
                     t.text = even_text
 
 
@@ -1700,7 +1700,7 @@ def load_state(project_dir: str | Path) -> dict[str, Any]:
         "timestamp": datetime.now().isoformat(),
         "step": "writing",
         "thesis": {
-            "title": parsed.get("title") or "未命名硕士论文",
+            "title": parsed.get("title") or "未命名 ZJE 本科毕业论文",
             "chapters": parsed.get("chapters") or default_outline(),
         },
         "references": [],

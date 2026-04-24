@@ -12,9 +12,9 @@ def validate(project_dir: str | Path) -> dict[str, object]:
     project = Path(project_dir).resolve()
     xml_path = project / "09_state" / "current_working.xml"
     if not xml_path.exists():
-        xml_path = project / "01_template" / "template.flat.xml"
+        xml_path = project / "00_zje_templates" / "template.flat.xml"
     if not xml_path.exists():
-        raise SystemExit("No XML found at 09_state/current_working.xml or 01_template/template.flat.xml")
+        raise SystemExit("No XML found at 09_state/current_working.xml or 00_zje_templates/template.flat.xml")
     kind = sniff_xml_kind(xml_path)
     if kind != "flat_opc":
         raise SystemExit(f"XML is not Flat OPC: {kind}")

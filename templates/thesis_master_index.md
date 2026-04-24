@@ -1,31 +1,96 @@
-# Thesis Master Index
+# Thesis Master Index — ZJE 本科毕业论文
 
-This file is the visible control plane for the thesis outline. Update it after parsing a Word draft, confirming a new outline, or changing chapter status.
+本文件是论文大纲的可见控制平面。在确认题目、迁移英文论文章节或更改章节状态后更新。
 
-## Writing Mode
+---
 
-- Current mode:
-- User status:
-- Next action:
+## 基本信息
 
-## Outline
+- 论文题目（中文）：
+- 论文题目（英文）：
+- 导师：
+- 专业：
+- 当前写作模式：
+- 下一步行动：
 
-| Chapter | Title | Status | Main Assets | Notes |
-| --- | --- | --- | --- | --- |
-| Chapter 1 | Introduction |  | references |  |
-| Chapter 2 | Related Theory and Literature Review |  | references |  |
-| Chapter 3 | Method / Model / System Design |  | code, formulas, figures |  |
-| Chapter 4 | Experiments and Result Analysis |  | data, tables, figures |  |
-| Chapter 5 | Conclusion and Future Work |  | confirmed findings |  |
+---
 
-## Terminology
+## 第一部分：毕业论文（设计）
 
-Record confirmed domain terms here. Do not invent unsupported academic terms during drafting.
+> 来源：IBMS10008 英文毕业论文，翻译为中文
+> 格式：仿宋小四号，1.5倍行距；章/节/子节标题分别对应三号/小三号/四号仿宋加黑
 
-| Term | Source | Preferred Chinese Expression | Notes |
-| --- | --- | --- | --- |
+### 大纲
 
-## Open Questions
+| 章节 | 标题 | 来源 | 翻译状态 | 格式状态 | 主要资产 |
+|------|------|------|---------|---------|---------|
+| 封面 | 大封面 | 附件8 | — | 待填 | 教务处模板 |
+| — | 承诺书 | 附件6 | — | 待填 | 教务处模板 |
+| — | 致谢 | 英文 Acknowledgement | 待翻译 | 待填 | 英文论文 |
+| — | 中文摘要 | 英文 Abstract | 待翻译 | 待填 | 英文论文 |
+| — | 英文摘要 | 英文 Abstract | 不翻译·保留原文 | 待填 | 英文论文 |
+| — | 目录 | — | — | 待生成 | 教务处要求 |
+| ch1 | [章1标题] | Introduction | 待翻译/进行中/已完成 | 待填 | 英文论文 |
+| ch2 | [章2标题] | Methods | 待翻译/进行中/已完成 | 待填 | 英文论文 |
+| ch3 | [章3标题] | Results | 待翻译/进行中/已完成 | 待填 | 英文论文 |
+| ch4 | [章4标题] | Discussion | 待翻译/进行中/已完成 | 待填 | 英文论文 |
+| ch5 | [章5标题] | Conclusion | 待翻译/进行中/已完成 | 待填 | 英文论文 |
+| — | 参考文献 | References | — | 待整理 | 英文论文 |
+| — | 作者简历 | 作者自述 | 待翻译 | 待填 | 教务处要求 |
 
-| Question | Related Chapter | Status |
-| --- | --- | --- |
+---
+
+## 第二部分：文献综述和开题报告
+
+> 来源：Project Preview 课程材料（英文原文，不翻译）
+> 格式：同第一部分正文（外文翻译部分为中文）
+
+### 大纲
+
+| 章节 | 标题 | 来源 | 状态 | 格式状态 | 主要资产 |
+|------|------|------|------|---------|---------|
+| 封面 | 第二部分封面1 | 附件8 | — | 待填 | 教务处模板 |
+| 封面 | 第二部分封面2 | 附件2 | — | 待填 | 教务处模板 |
+| — | 指导教师具体要求 | 附件2 | 待填 | 待填 | 教务处模板 |
+| — | 目录 | — | — | 待生成 | 教务处要求 |
+| ch1 | 文献综述 | Preview 文献综述 | 待填/已完成 | 待填 | Preview 材料 |
+| ch2 | 开题报告 | Preview 开题报告 | 待填/已完成 | 待填 | Preview 材料 |
+| ch3 | 外文翻译 | 用户选取论文 | 待翻译 | 待填 | 用户选取论文 |
+| ch4 | 外文原文 | 同上 | 待附 | 待附 | 用户选取论文原文 |
+| — | 考核表 | 附件3 | 待填 | 待填 | 教务处模板 |
+
+---
+
+## 术语表
+
+记录已确认的领域术语。不要在写作中凭空创造学术术语。
+
+| 术语 | 英文原文 | 首选中文表达 | 来源 | 备注 |
+|------|---------|------------|------|------|
+|  |  |  |  |  |
+
+---
+
+## 开放问题
+
+| 问题 | 关联章节 | 状态 | 处理方式 |
+|------|---------|------|---------|
+| 中文摘要字数（300–600字） | 摘要 | 待确认 | 用户确认 |
+| 外文翻译论文选取 | 外文翻译 | 待确认 | 用户选取 |
+| 参考文献列表整理 | 参考文献 | 待整理 | 用户提供或辅助检索 |
+
+---
+
+## 附件完成追踪
+
+| 附件编号 | 名称 | 完成状态 | 关键日期 | 备注 |
+|---------|------|---------|---------|------|
+| 附件1 | 毕业论文任务书 | 待填写/已完成 | 2026-01-12 |  |
+| 附件2 | 第二部分模板 | 待填写/已完成 | — |  |
+| 附件3 | 文献综述和开题报告考核表 | 待填写/已完成 | 2026-02-28 |  |
+| 附件6 | 承诺书 | 待填写/已完成 | — | 电子版可不签 |
+| 附件8 | 第一部分模板 | 待填写/已完成 | — |  |
+| 附件9 | 专家评阅意见表 | 待填写/已完成 | — | 粘贴 Dissertation feedback |
+| 附件10 | 现场答辩记录表 | 待填写/已完成 | 答辩当天 | 答辩现场填写 |
+| 附件11 | 毕业论文考核表 | 待填写/已完成 | 2026-05-15 | 粘贴 Oral Presentation feedback |
+| 附件17 | 中文查重报告 | 待生成 | 查重后 | ≤10% 通过 |

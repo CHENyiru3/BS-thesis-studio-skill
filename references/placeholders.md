@@ -1,36 +1,97 @@
-# Placeholder Protocol
+# Placeholder Protocol — ZJE 本科毕业论文
 
-The Markdown layer uses explicit tags so the XML layer can write deterministic Word nodes.
+Markdown 层使用显式标签，使 XML 层能够写入确定的 Word 节点。
 
-## Tags
+## 标签说明
 
-- `[[FIG:description]]`: insert image placeholder paragraph plus caption. XML output uses `图 X-Y`.
-- `[[TBL:description]]`: insert table caption and a real Word `w:tbl` generated from structured rows or a known experiment-table description. XML output uses `表 X-Y`; generated tables must be thesis three-line tables.
-- `[[EQ:formula]]`: insert display formula. XML output uses OMML text with chapter-local numbering in `(chapter.index)` form, for example `(3.1)`.
-- `[[SYM:formula]]`: insert inline math symbol with OMML.
-- `[[REF:n]]`: insert numbered bibliography cross-reference as a superscript field.
-- `[[REF:KEYWORD_PLACEHOLDER: terms]]`: unresolved reference that can be normalized into a numeric ID.
-- `[[REF_FIG:description]]`: render a Markdown figure reference.
-- `[[REF_TBL:description]]`: render a Markdown table reference.
-- `[[CODE:path-or-description]]`: track code asset needs in Markdown.
-- `[[DATA:path-or-description]]`: track data asset needs in Markdown.
+- `[[FIG:描述]]`：插入图片占位段落及图题。XML 输出使用 `图 X-Y`。
+- `[[TBL:描述]]`：插入表题及 Word 三线表。XML 输出使用 `表 X-Y`。
+- `[[EQ:公式]]`：插入显示公式。公式编号使用 `(章节.编号)` 形式，如 `(3.1)`。
+- `[[SYM:符号]]`：插入行内数学符号（OMML）。
+- `[[REF:n]]`：生成编号参考文献交叉引用（上标域）。
+- `[[REF:关键词占位: 术语]]`：未解决的引用，可规范化为数字编号。
+- `[[REF_FIG:描述]]`：渲染正文中对图的引用。
+- `[[REF_TBL:描述]]`：渲染正文中对表的引用。
+- `[[CODE:路径或说明]]`：在 Markdown 中标记代码资产需求。
+- `[[DATA:路径或说明]]`：在 Markdown 中标记数据资产需求。
 
-## Rules
+## 规则
 
-- Do not remove or rewrite placeholders during polishing.
-- Do not hard-code figure/table numbers in prose.
-- Write figure references as `如图[[REF_FIG:description]]所示` or `见[[REF_FIG:description]]`; write table references as `如表[[REF_TBL:description]]所示` or `见[[REF_TBL:description]]`. The writer renders them as `图X-Y` and `表X-Y`.
-- Multiple references must be split as `[[REF:1]][[REF:2]]`, not `[[REF:1,2]]`.
-- Descriptions should be stable because figure/table references are matched by description.
-- If `[[TBL:description]]` is immediately followed by a Markdown pipe table, the pipe table is the authoritative data source. The writer must use those rows and must not replace them with fallback sample rows.
-- `[[FIG:description]]` should use the same stable description as the figure caption or extracted figure manifest entry. Figure embedding may match by description first and by order only as a fallback.
-- Reverse-parsed assets may include Unicode math symbols such as `∈`, `ℝ`, `⊗`, `σ`, and `λ`. Keep them if they are already readable; do not force them back to LaTeX.
+- 润色时不要删除或重写占位符。
+- 不要在正文中硬编码图号、表号。
+- 图引用写作 `如图[[REF_FIG:描述]]所示`；表引用写作 `如表[[REF_TBL:描述]]所示`。
+- 多个引用必须分开：`[[REF:1]][[REF:2]]`，不能 `[[REF:1,2]]`。
+- 描述应保持稳定，因为图表引用按描述匹配。
+- `[[TBL:描述]]` 后紧跟 Markdown 管道表格时，该表格为权威数据源，写回时必须使用，不得替换为示例行。
+- 反解析得到的 Unicode 数学符号（如 `∈`、`ℝ`、`⊗`、`σ`、`λ`）如已可读则保留，不要强制转回 LaTeX。
 
-## Formula Syntax
+---
 
-- Use a limited LaTeX-style syntax inside `[[SYM:...]]` and `[[EQ:...]]`.
-- Prefer `\mathbb{R}` for real-number spaces, for example `[[SYM:X\in\mathbb{R}^{H\times W\times C}]]`.
-- Supported conversions include `\in`, `\times`, `\cap`, `\cup`, `\otimes`, `\sigma`, `\lambda`, `\frac{...}{...}`, `^{...}`, and `_{...}`.
-- The writer must convert supported LaTeX tokens to Word OMML structures or math symbols before XML writeback; raw backslash commands should not appear in the final Word body.
-- Display formula numbering must use an ASCII period between chapter and formula number, for example `(3.1)`, not `(3-1)` or `(3－1)`.
-- Reverse parsing should preserve real OMML formula text as `[[EQ:formula]]` or `[[SYM:formula]]`, after removing old equation numbers. Avoid generic `[[EQ:公式]]` placeholders unless the formula text cannot be recovered.
+## ZJE 格式规范
+
+### 第一部分正文格式（毕业论文主体）
+
+| 元素 | 字体 | 字号 | 行距 |
+|------|------|------|------|
+| 章标题 | 仿宋 | 三号加黑 | — |
+| 节标题 | 仿宋 | 小三号加黑 | — |
+| 子节标题 | 仿宋 | 四号加黑 | — |
+| 中文正文 | 仿宋 | 小四号 | 1.5倍 |
+| 英文正文 | Times New Roman | 小四号 | 1.5倍 |
+| 图题 | 宋体 | 五号加粗 | — |
+| 表题 | 宋体 | 五号加粗 | — |
+| 表格中文 | 宋体 | 五号 | 单倍 |
+
+### 页眉页脚
+
+- **前置部分**（大封面至目录）：无页眉；页脚为罗马数字页码，居中
+- **第一部分正文**：奇数页眉→论文名（居右）；偶数页眉→"浙江大学本科生毕业论文（设计）"（居左）；页脚为阿拉伯数字，居中，连续编码
+- **第二部分正文**：同上
+
+### 表格样式
+
+ZJE 要求使用**国际通行的三线表**：
+- 顶线：`single sz=12`（粗实线）
+- 底线：`single sz=12`（粗实线）
+- 表头底线：`single sz=4`（细线）
+- 左/右/内部垂直线：**无边框**（none）
+- 表格内单元格：垂直居中对齐 `w:vAlign=center`，水平居中对齐 `w:jc=center`
+
+### 公式编号
+
+- 显示公式编号形式：`(章节.编号)`，例如 `(3.1)`
+- 编号与公式同行右对齐
+- 公式编号使用 ASCII 句点，不是破折号或全角短横线
+
+### 摘要格式
+
+- 中文摘要：标题"摘要"（仿宋三号加黑），正文（仿宋小四号，1.5倍行距），关键词3–8个
+- 英文摘要（Abstract）：标题"Abstract"（Times New Roman 三号），正文（Times New Roman 小四号，1.5倍行距），Key words 3–8个
+- 中文摘要字数：300–600字
+
+### 公式语法
+
+- 使用有限 LaTeX 语法：`\in`、`\times`、`\cap`、`\cup`、`\otimes`、`\sigma`、`\lambda`、`\frac{...}{...}`、`^{...}`、`_{...}`
+- `\mathbb{R}` 表示实数空间，例如 `[[SYM:X\in\mathbb{R}^{H\times W\times C}]]`
+- 写回 Word 前将支持的 LaTeX 符号转换为 OMML 结构，原始反斜杠命令不得残留在最终 Word 正文中
+
+---
+
+## 公式语法（续）
+
+### 支持的转换
+
+| LaTeX | 说明 | Word OMML |
+|--------|------|-----------|
+| `\in` | 元素符号 | `<&in;>` |
+| `\times` | 乘号 | `<&times;>` |
+| `\cap` | 交集 | `<&cap;>` |
+| `\cup` | 并集 | `<&cup;>` |
+| `\otimes` | 张量积 | `<&otimes;>` |
+| `\sigma` | 西格玛 | `<&sigma;>` |
+| `\lambda` | 兰姆达 | `<&lambda;>` |
+| `\frac{a}{b}` | 分数 | OMML frac |
+| `^{...}` | 上标 | OMML sup |
+| `_{...}` | 下标 | OMML sub |
+
+反解析时，如果公式文本不可恢复，标记为需要人工修复，不要生成泛型 `[[EQ:公式]]` 占位符。

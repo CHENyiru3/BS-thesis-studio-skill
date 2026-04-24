@@ -221,7 +221,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     project = Path(args.project_dir).resolve()
-    template_xml = project / "01_template" / "template.flat.xml"
+    template_xml = project / "00_zje_templates" / "template.flat.xml"
     if not template_xml.exists():
         raise SystemExit(f"Missing template XML: {template_xml}")
 
