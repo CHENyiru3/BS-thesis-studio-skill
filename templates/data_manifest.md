@@ -1,6 +1,6 @@
-# Data Manifest
+# Data Manifest — 数据资产清单
 
-Record datasets, processed results, experiment logs, metrics, and tables. Metrics must come from data or be explicitly marked as example/simulation.
+记录数据集、处理结果、实验日志、指标和表格。指标必须来自数据，或明确标注为示例/模拟值。
 
-| ID | Path | Description | Related Chapter | Supports Claim | Status |
+| ID | 路径 | 描述 | 关联章节 | 支撑的论断 | 状态 |
 | --- | --- | --- | --- | --- | --- |

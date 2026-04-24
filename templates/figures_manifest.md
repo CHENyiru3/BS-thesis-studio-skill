@@ -1,6 +1,6 @@
-# Figures Manifest
+# Figures Manifest — 图片资产清单
 
-Use filenames such as `图1-1.png` or `fig1-1_method_flow.png`. Figure captions and references should be controlled by placeholders, not hard-coded in prose.
+图片文件命名参考：`图1-1.png` 或 `fig1-1_method_flow.png`。图和图注通过占位符管理，不在正文中硬编码。
 
-| ID | File | Caption | Related Chapter | Source | Status | Notes |
+| ID | 文件路径 | 图注 | 关联章节 | 来源 | 状态 | 备注 |
 | --- | --- | --- | --- | --- | --- | --- |

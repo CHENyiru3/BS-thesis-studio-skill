@@ -1,6 +1,6 @@
-# Tables Manifest
+# Tables Manifest — 表格资产清单
 
-Record tables, data sources, and whether values are real, estimated, or example/simulation. Generated Word tables use the thesis three-line table style.
+记录表格、数据来源，以及数值是真实数据、估算值还是示例/模拟值。生成的 Word 表格使用三线表样式。
 
-| ID | File/Data | Caption | Related Chapter | Value Source | Status | Notes |
+| ID | 文件/数据 | 表题 | 关联章节 | 数值来源 | 状态 | 备注 |
 | --- | --- | --- | --- | --- | --- | --- |

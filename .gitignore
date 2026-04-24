@@ -14,8 +14,10 @@ sample_thesis/
 
 # === 个人论文散落在 examples/ 中的文件 ===
 examples/2137 20.36.35.pdf
+examples/次要文件/
 
-# === Python ===
+# === Python 虚拟环境 ===
+list/
 __pycache__/
 *.pyc
 *.pyo

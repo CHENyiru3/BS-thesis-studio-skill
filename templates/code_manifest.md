@@ -1,6 +1,6 @@
-# Code Manifest
+# Code Manifest — 代码资产清单
 
-Record code that can support method writing, implementation details, experiments, figures, or innovation claims. Do not turn code into thesis claims until its role is confirmed.
+记录可用于支撑方法写作、实现细节、实验、图表或创新声明的代码。代码的角色确认之前，不将其转化为论文中的论断。
 
-| ID | Path | Purpose | Related Chapter | Can Be Written As | Status |
+| ID | 路径 | 用途 | 关联章节 | 可写成 | 状态 |
 | --- | --- | --- | --- | --- | --- |

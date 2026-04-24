@@ -47,13 +47,11 @@ def init_workspace(project_dir: str | Path, template: str | Path | None = None, 
     copy_if_missing("tables_manifest.md", project / "05_tables" / "tables_manifest.md")
     copy_if_missing("code_manifest.md", project / "06_code" / "code_manifest.md")
     copy_if_missing("data_manifest.md", project / "07_data" / "data_manifest.md")
+    copy_if_missing("decisions_log.md", project / "00_project" / "decisions_log.md")
 
     progress = project / "00_project" / "writing_progress.md"
     if not progress.exists():
         progress.write_text("# Writing Progress\n\n- Initialized workspace.\n", encoding="utf-8")
-    decisions = project / "00_project" / "decisions_log.md"
-    if not decisions.exists():
-        decisions.write_text("# Decisions Log\n\n", encoding="utf-8")
 
     parsed = {}
     if template:

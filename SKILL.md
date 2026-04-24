@@ -187,11 +187,6 @@ BS-thesis-studio-skill/
 │  ├─ 附件11-毕业论文考核表.pdf
 │  ├─ 附件17-中文查重报告-打印说明.pdf
 │  ├─ 往届学生优秀论文案例-参考.pdf
-│  ├─ 本次同学英文论文.docx              ← 参考用英文论文示例
-├─ sample_thesis/
-│  └─ translation_parts/            ← 英文论文已完成的中文翻译（8章+11张图片）
-│     ├─ 01_致谢.md ~ 08_结论.md
-│     └─ figures/ (Figure1~8, FigureS1~S3)
 ├─ references/
 │  ├─ writing_workflow.md       ← ZJE 写作工作流（问诊、模式、大纲）
 │  ├─ placeholders.md          ← 占位符规范与 ZJE 格式说明
@@ -202,6 +197,7 @@ BS-thesis-studio-skill/
 │  ├─ flat_opc_converter.py
 │  ├─ parse_template_xml.py
 │  ├─ generate_planning_files.py
+│  ├─ reverse_parse_docx.py
 │  ├─ apply_markdown_to_xml.py
 │  ├─ build_new_docx.py
 │  ├─ embed_figures_docx.py
@@ -225,7 +221,7 @@ BS-thesis-studio-skill/
 |------|--------|-----------|---------|
 | 0. 判断状态 | 项目目录、`00_project/`、`09_state/` | 判断是新项目还是续写项目 | 无 |
 | 1. 初始化工作区 | `examples/` 附件模板、`examples/中文论文材料顺序-全局索引.xlsx` | 在论文项目文件夹内生成目录结构 | `python <skill_dir>/scripts/init_thesis_workspace.py .` |
-| 2. 引用已完成的翻译 | `sample_thesis/translation_parts/`（中文章节） | 将 8 个 Markdown 章节 + 11 张图片复制到 `03_chapters/` 和 `04_figures/` | 手动整理 |
+| 2. 引用已完成的翻译 | `03_chapters/` 中的已有章节 | 确认章节标题和格式并更新 `00_project/` 中的索引 | 手动整理 |
 | 3. 填写 Part 2 模板 | `examples/附件2-第二部分模板-文献综述开题报告外文翻译.doc`、`examples/第二部分正文编写说明-文献综述开题报告外文翻译规则.pdf` | `03_chapters/part2_lit_review.md`、`03_chapters/part2_proposal.md`、`03_chapters/part2_translation.md` | 无脚本·手动填写 |
 | 4. 填写附件表格 | `examples/` 对应附件文件 | 各附件填好的 .docx 版本 | 无脚本·手动填写 |
 | 5. 参考文献处理 | `references/reference_rules.md`、`08_refs/` | 规范化引用占位符、参考文献表 | `python <skill_dir>/scripts/reference_tools.py format <refs.json> --style "GB/T 7714"` |
@@ -239,8 +235,8 @@ BS-thesis-studio-skill/
 
 - `00_project/project_manifest.md`：英文论文元数据、中文论文目标、当前进度、已有资产、缺失项、关键决策
 - `00_project/thesis_master_index.md`：两大部分大纲、章节状态、术语表、开放问题
-- `03_chapters/`：从 `sample_thesis/translation_parts/` 引用的中文章节（致谢、摘要、引言、材料与方法、结果、讨论、结论）
-- `04_figures/figures_manifest.md`：从 `sample_thesis/translation_parts/figures/` 引用的图片资产清单
+- `03_chapters/`：中文论文章节（致谢、摘要、引言、材料与方法、结果、讨论、结论）
+- `04_figures/figures_manifest.md`：图片资产清单
 - `05_tables/tables_manifest.md`：表格资产清单
 - `06_code/code_manifest.md`：代码资产清单
 - `07_data/data_manifest.md`：数据资产清单
