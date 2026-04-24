@@ -12,6 +12,9 @@
 # === 示例翻译（参考用，但包含具体论文内容，不上传） ===
 sample_thesis/
 
+# === 个人论文散落在 examples/ 中的文件 ===
+examples/2137 20.36.35.pdf
+
 # === Python ===
 __pycache__/
 *.pyc
