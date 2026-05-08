@@ -81,18 +81,21 @@ Schema 定义在 `assets/project_state.schema.json`，核心字段：
 
 ---
 
-## 五、Project Preview 评分标准
+## 五、课程构成与 Project Preview 参考
 
-### 评分结构
+### 260506 PDF 课程构成记录
 
-Project Preview 包含两部分，各占不同权重：
+以下为 `examples/ZJE本科生中文毕业论文材料编写指导(中国籍学生专场)260506.pdf` 讲座表格中的课程构成记录；具体评分和学分解释仍以课程手册与 BB 通知为准。
 
-| 组成部分 | 说明 | 权重 |
-|----------|------|------|
-| Literature Review | 1000字英文文献综述 | 2.5 ZJU 学分 |
-| Research Proposal | 1000字英文开题报告 | 10 UoE 学分 |
+| 组成部分 | ZJU 侧记录 | UoE 侧记录 | 长度/形式 | 完成时间 |
+|----------|------------|------------|-----------|----------|
+| Literature Review | 10% | 10 Credits | 2000 words | S1 |
+| Research Proposal | 15% | — | — | S2 |
+| Literature Translation | 5% | N/A | 无硬性字数；中国籍学生中文论文用 | S2 |
+| Project Dissertation | 70% | 40 Credits 中的 85% | 5000 words | S2 |
+| Defense/presentation | — | 40 Credits 中的 15% | 15+5 mins | S2 |
 
-### 评分等级参考
+### Project Preview 评分参考
 
 | 等级 | 典型描述 |
 |------|---------|
